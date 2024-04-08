@@ -12,6 +12,7 @@ const MemberView = () => {
   const [healthStatistics, setHealthStatistics] = useState({});
   const [fitnessAchievements, setFitnessAchievements] = useState([]);
   const [exerciseProgram, setExerciseProgram] = useState([]);
+  const [userDetails, setUserDetails] = useState({}); // State to hold user details
 
   useEffect(() => {
     fetchMemberData();
@@ -25,6 +26,7 @@ const MemberView = () => {
         fetchHealthStatistics(),
         fetchFitnessAchievements(),
         fetchExerciseProgram(),
+        fetchUserDetails(),
       ]);
     } catch (error) {
       console.error('Error fetching member data:', error.message);
@@ -87,6 +89,20 @@ const MemberView = () => {
       }
     } catch (error) {
       console.error('Error fetching fitness achievements:', error.message);
+    }
+  };
+  const fetchUserDetails = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/members/${memberId}`);
+      if (response.ok) {
+        const userDetailsData = await response.json();
+        setUserDetails(userDetailsData);
+        console.log(userDetailsData);
+      } else {
+        console.error('Failed to fetch user details');
+      }
+    } catch (error) {
+      console.error('Error fetching user details:', error.message);
     }
   };
 
@@ -231,15 +247,56 @@ const MemberView = () => {
         <span className="badge rounded-pill bg-primary">'</span>&nbsp;Member View
       </h1>
       <div className="container mt-5">
-        {/* Display Health Statistics */}
-        <div className="mb-4">
-          <h2>Health Statistics</h2>
-          <p>Weight: {healthStatistics.weight} kg</p>
-          <p>Height: {healthStatistics.height} cm</p>
-          <p>BMI: {healthStatistics.bmi}</p>
-          {/* Add more health statistics as needed */}
-        </div>
+      <div className="mb-4">
+      <div className="mb-4">
+  <h2>Health Statistics</h2>
+  <table className="table table-bordered">
+    <tbody>
+      <tr>
+        <th scope="row">Weight</th>
+        <td>{healthStatistics.weight} kg</td>
+      </tr>
+      <tr>
+        <th scope="row">Height</th>
+        <td>{healthStatistics.height} cm</td>
+      </tr>
+      <tr>
+        <th scope="row">BMI</th>
+        <td>
+          {(
+            10000 * (healthStatistics.weight / (healthStatistics.height * healthStatistics.height))
+          ).toFixed(2)}
+        </td>
+      </tr>
 
+    </tbody>
+  </table>
+</div>
+</div>
+{/* Display Personal Details */}
+<div className="mb-4">
+          <h2>Personal Details</h2>
+          <table className="table table-bordered">
+            <tbody>
+              <tr>
+                <th scope="row">First Name</th>
+                <td>{userDetails.firstname}</td>
+              </tr>
+              <tr>
+                <th scope="row">Last Name</th>
+                <td>{userDetails.lastname}</td>
+              </tr>
+              <tr>
+                <th scope="row">Phone Number</th>
+                <td>{userDetails.phonenum}</td>
+              </tr>
+              <tr>
+                <th scope="row">Address</th>
+                <td>{userDetails.address}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         {/* Display Exercise Program */}
 <div className="mb-4">
   <h2>Exercise Program</h2>

@@ -23,6 +23,20 @@ app.get("/test-db-connection", async (req, res) => {
 
 
 // Member Functions
+//view personal details
+app.get("/members/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const persoDetails = await pool.query(
+            "SELECT * FROM Members WHERE memberId = $1",
+            [id]
+        );
+        res.json(persoDetails.rows[0]);
+        console.log(persoDetails);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
 //Add new member
 app.post("/members", async (req, res) => {
     try {
@@ -186,7 +200,6 @@ app.post("/members/:memberId/personalTraining", async (req, res) => {
     }
   });
   
-
 // Register a member in a personal training session
 app.post("/members/:memberId/personalTraining", async (req, res) => {
     try {
@@ -252,7 +265,7 @@ app.post("/members/:memberId/personalTraining", async (req, res) => {
     }
   });
   
-
+//get member balance
 app.get("/members/:memberId/balance", async (req, res) => {
     try {
       const { memberId } = req.params;
@@ -277,8 +290,6 @@ app.get("/members/:memberId/balance", async (req, res) => {
     }
   });
   
-
-
 // Delete a class from member's schedule
 app.delete("/members/:memberId/classes/:classId", async (req, res) => {
     try {
@@ -302,7 +313,7 @@ app.get("/members/:memberId/healthStatistics", async (req, res) => {
     try {
         const { memberId } = req.params;
         const healthStatistics = await pool.query(
-            "SELECT strength, flexibility, cardio FROM Members WHERE memberId = $1",
+            "SELECT * FROM Members WHERE memberId = $1",
             [memberId]
         );
         res.json(healthStatistics.rows[0]);
@@ -336,20 +347,7 @@ app.get("/members/:memberId/exerciseProgram", async (req, res) => {
         console.error(err.message);
     }
 });
-//update exercise program
-app.put("/members/:memberId/exerciseProgram", async (req, res) => {
-    try {
-        const { memberId } = req.params;
-        const { exerciseProgramId } = req.body;
-        const updateExerciseProgram = await pool.query(
-            "UPDATE Members SET exerciseProgramId = $1 WHERE memberId = $2",
-            [exerciseProgramId, memberId]
-        );
-        res.json("Exercise program updated");
-    } catch (err) {
-        console.error(err.message);
-    }
-});
+
 //update health metrics
 app.put("/members/:memberId/healthMetrics", async (req, res) => {
     try {
