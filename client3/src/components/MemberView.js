@@ -13,6 +13,7 @@ const MemberView = () => {
   const [fitnessAchievements, setFitnessAchievements] = useState([]);
   const [exerciseProgram, setExerciseProgram] = useState([]);
   const [userDetails, setUserDetails] = useState({}); // State to hold user details
+  const [editedDetails, setEditedDetails] = useState({});
 
   useEffect(() => {
     fetchMemberData();
@@ -97,12 +98,45 @@ const MemberView = () => {
       if (response.ok) {
         const userDetailsData = await response.json();
         setUserDetails(userDetailsData);
-        console.log(userDetailsData);
+        setEditedDetails({ ...userDetailsData }); // Initialize editedDetails with fetched user details
       } else {
         console.error('Failed to fetch user details');
       }
     } catch (error) {
       console.error('Error fetching user details:', error.message);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditedDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
+  };
+
+  const handleUpdateDetails = async () => {
+    const { firstName, lastName, phoneNum, address, emailAddress } = editedDetails;
+    try {
+      const response = await fetch(`http://localhost:5000/members/${memberId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          phoneNum,
+          address,
+          emailAddress,
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Member details updated successfully');
+        fetchUserDetails(); // Refresh user details after update
+      } else {
+        console.error('Failed to update member details');
+      }
+    } catch (error) {
+      console.error('Error updating member details:', error.message);
     }
   };
 
@@ -280,22 +314,64 @@ const MemberView = () => {
             <tbody>
               <tr>
                 <th scope="row">First Name</th>
-                <td>{userDetails.firstname}</td>
+                <td>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={editedDetails.firstName ||  userDetails.firstname}
+                    onChange={handleInputChange}
+                  />
+                </td>
               </tr>
               <tr>
                 <th scope="row">Last Name</th>
-                <td>{userDetails.lastname}</td>
+                <td>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={editedDetails.lastName ||  userDetails.lastname}
+                    onChange={handleInputChange}
+                  />
+                </td>
               </tr>
               <tr>
                 <th scope="row">Phone Number</th>
-                <td>{userDetails.phonenum}</td>
+                <td>
+                  <input
+                    type="text"
+                    name="phoneNum"
+                    value={editedDetails.phoneNum ||  userDetails.phonenum}
+                    onChange={handleInputChange}
+                  />
+                </td>
               </tr>
               <tr>
                 <th scope="row">Address</th>
-                <td>{userDetails.address}</td>
+                <td>
+                  <input
+                    type="text"
+                    name="address"
+                    value={editedDetails.address || userDetails.address}
+                    onChange={handleInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Email Address</th>
+                <td>
+                  <input
+                    type="text"
+                    name="emailaddress"
+                    value={editedDetails.emailaddress || userDetails.emailaddress}
+                    onChange={handleInputChange}
+                  />
+                </td>
               </tr>
             </tbody>
           </table>
+          <button className="btn btn-primary" onClick={handleUpdateDetails}>
+            Update Details
+          </button>
         </div>
         {/* Display Exercise Program */}
 <div className="mb-4">

@@ -66,23 +66,65 @@ app.post("/members", async (req, res) => {
 //update personal info
 app.put("/members/:id", async (req, res) => {
     try {
-        const { id } = req.params;
-        const {
-            firstName,
-            lastName,
-            phoneNum,
-            address,
-            emailAddress
-        } = req.body;
-        const updateMember = await pool.query(
-            "UPDATE Members SET firstName = $1, lastName = $2, phoneNum = $3, address = $4, emailAddress = $5 WHERE memberId = $6",
-            [firstName, lastName, phoneNum, address, emailAddress, id]
-        );
-        res.json("Member updated");
+      const { id } = req.params;
+      const {
+        firstName,
+        lastName,
+        phoneNum,
+        address,
+        emailAddress
+      } = req.body;
+  
+      // Initialize arrays to store columns and corresponding values
+      const columns = [];
+      const values = [];
+  
+      // Build the SET clause dynamically based on non-null values in the request body
+      if (firstName !== null && firstName !== undefined) {
+        columns.push("firstName");
+        values.push(firstName);
+      }
+      if (lastName !== null && lastName !== undefined) {
+        columns.push("lastName");
+        values.push(lastName);
+      }
+      if (phoneNum !== null && phoneNum !== undefined) {
+        columns.push("phoneNum");
+        values.push(phoneNum);
+      }
+      if (address !== null && address !== undefined) {
+        columns.push("address");
+        values.push(address);
+      }
+      if (emailAddress !== null && emailAddress !== undefined) {
+        columns.push("emailAddress");
+        values.push(emailAddress);
+      }
+  
+      // Ensure at least one valid column/value pair is present for the update
+      if (columns.length === 0) {
+        return res.status(400).json({ error: "No valid fields provided for update" });
+      }
+  
+      // Add the member ID to the values array
+      values.push(id);
+  
+      // Construct the dynamic SET clause for the SQL update query
+      const setClause = columns.map((col, index) => `${col} = $${index + 1}`).join(", ");
+  
+      // Prepare and execute the SQL update query
+      const updateMember = await pool.query(
+        `UPDATE Members SET ${setClause} WHERE memberId = $${values.length}`,
+        values
+      );
+  
+      res.json("Member updated");
     } catch (err) {
-        console.error(err.message);
+      console.error(err.message);
+      res.status(500).json({ error: "Internal Server Error" });
     }
-});
+  });
+  
 //update fitness goals
 app.put("/members/:id/fitness", async (req, res) => {
     try {
