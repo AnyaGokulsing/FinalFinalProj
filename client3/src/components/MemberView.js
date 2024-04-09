@@ -16,7 +16,9 @@ const MemberView = () => {
   const [editedDetails, setEditedDetails] = useState({});
   const [editedWeight, setEditedWeight] = useState('');
   const [editedHeight, setEditedHeight] = useState('');
-
+  const [editedFitnessAchievements, setEditedFitnessAchievements] = useState([]);
+  const [editedFitnessDetails, setEditedFitnessDetails] = useState({});
+  
   useEffect(() => {
     fetchMemberData();
   }, []);
@@ -87,8 +89,7 @@ const MemberView = () => {
       if (response.ok) {
         const achievements = await response.json();
         setFitnessAchievements(achievements);
-        console.log("Fitness achievements");
-        console.log(fitnessAchievements);
+        setEditedFitnessAchievements([...achievements]); // Initialize edited achievements with fetched data
       } else {
         console.error('Failed to fetch fitness achievements');
       }
@@ -96,6 +97,34 @@ const MemberView = () => {
       console.error('Error fetching fitness achievements:', error.message);
     }
   };
+  const handleFitnessAchievementInputChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedAchievements = [...editedFitnessAchievements];
+    updatedAchievements[index][name] = value;
+    setEditedFitnessAchievements(updatedAchievements);
+  };
+  const handleUpdateFitnessAchievements = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/members/1/fitness`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editedFitnessAchievements),
+      });
+      console.log("Fitness");
+      console.log(editedFitnessAchievements);
+      if (response.ok) {
+        console.log('Fitness achievements updated successfully');
+        fetchFitnessAchievements(); // Refresh fitness achievements after update
+      } else {
+        console.error('Failed to update fitness achievements');
+      }
+    } catch (error) {
+      console.error('Error updating fitness achievements:', error.message);
+    }
+  };
+  
   const fetchUserDetails = async () => {
     try {
       const response = await fetch(`http://localhost:5000/members/${memberId}`);
@@ -487,22 +516,70 @@ const MemberView = () => {
         </tr>
       </thead>
       <tbody>
-        {fitnessAchievements.map((achievement) => (
-          <tr key={`achievement-${achievement.achievementid}`}>
-            <td>{achievement.achievementid}</td>
-            <td>{achievement.steps}</td>
-            <td>{achievement.heartrate}</td>
-            <td>{achievement.timetocomplete}</td>
-            <td>{achievement.persoflexibility}</td>
-            <td>{achievement.persostrength}</td>
-            <td>{achievement.persocardio}</td>
-          </tr>
-        ))}
+      {editedFitnessAchievements.map((achievement, index) => (
+  <tr key={`edited-achievement-${index}`}>
+    <td>{achievement.achievementid}</td>
+    <td>
+      <input
+        type="text"
+        name="steps"
+        value={achievement.steps}
+        onChange={(e) => handleFitnessAchievementInputChange(index, e)}
+      />
+    </td>
+    <td>
+      <input
+        type="text"
+        name="heartrate"
+        value={achievement.heartrate}
+        onChange={(e) => handleFitnessAchievementInputChange(index, e)}
+      />
+    </td>
+    <td>
+      <input
+        type="text"
+        name="timetocomplete"
+        value={achievement.timetocomplete}
+        onChange={(e) => handleFitnessAchievementInputChange(index, e)}
+      />
+    </td>
+    <td>
+      <input
+        type="text"
+        name="persoflexibility"
+        value={achievement.persoflexibility}
+        onChange={(e) => handleFitnessAchievementInputChange(index, e)}
+      />
+    </td>
+    <td>
+      <input
+        type="text"
+        name="persostrength"
+        value={achievement.persostrength}
+        onChange={(e) => handleFitnessAchievementInputChange(index, e)}
+      />
+    </td>
+    <td>
+      <input
+        type="text"
+        name="persocardio"
+        value={achievement.persocardio}
+        onChange={(e) => handleFitnessAchievementInputChange(index, e)}
+      />
+    </td>
+  </tr>
+))}
+
       </tbody>
+      <button className="btn btn-primary" onClick={handleUpdateFitnessAchievements}>
+          Update 
+        </button>
     </table>
+    
   ) : (
     <p>No fitness achievements found</p>
   )}
+
 </div>
 
 

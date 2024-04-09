@@ -159,26 +159,51 @@ app.put("/members/:id", async (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
-  
-//update fitness goals
-app.put("/members/:id/fitness", async (req, res) => {
+  app.put("/members/:id/fitness", async (req, res) => {
     try {
-        const { id } = req.params;
-        const {
-            exerciseProgramId,
-            strength,
-            flexibility,
-            cardio
-        } = req.body;
-        const updateFitness = await pool.query(
-            "UPDATE Members SET exerciseProgramId = $1, strength = $2, flexibility = $3, cardio = $4 WHERE memberId = $5",
-            [exerciseProgramId, strength, flexibility, cardio, id]
-        );
-        res.json("Fitness goals updated");
+      const { id } = req.params;
+  
+      // Destructure properties from req.body with correct property names
+      const { heartrate, persostrength, persoflexibility, persocardio, steps, timetocomplete } = req.body[0];
+  
+      // Log the received request body for debugging
+      console.log("Received Body:", req.body);
+  
+      // Log the extracted values from req.body for debugging
+      console.log("Extracted Values:", [req.body[0].heartrate, persostrength, persoflexibility, persocardio, steps, timetocomplete]);
+  
+      // Construct the SQL query using COALESCE to handle potential null values
+      const query = `
+        UPDATE memberachievement
+        SET 
+          heartrate = COALESCE($1, heartrate),
+          persostrength = COALESCE($2, persostrength),
+          persoflexibility = COALESCE($3, persoflexibility),
+          persocardio = COALESCE($4, persocardio),
+          steps = COALESCE($5, steps),
+          timetocomplete = COALESCE($6, timetocomplete)
+        WHERE memberid = $7
+      `;
+  
+      // Execute the SQL query with proper parameter binding
+      const updateFitness = await pool.query(query, [
+        heartrate,
+        persostrength,
+        persoflexibility,
+        persocardio,
+        steps,
+        timetocomplete,
+        id,
+      ]);
+  
+      res.json('Fitness goals updated');
     } catch (err) {
-        console.error(err.message);
+      console.error(err.message);
+      res.status(500).json('Internal Server Error');
     }
-});
+  });
+    
+
 //view fitness goals
 app.get("/members/:id/fitness", async (req, res) => {
     try {
