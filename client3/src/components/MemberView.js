@@ -14,6 +14,8 @@ const MemberView = () => {
   const [exerciseProgram, setExerciseProgram] = useState([]);
   const [userDetails, setUserDetails] = useState({}); // State to hold user details
   const [editedDetails, setEditedDetails] = useState({});
+  const [editedWeight, setEditedWeight] = useState('');
+  const [editedHeight, setEditedHeight] = useState('');
 
   useEffect(() => {
     fetchMemberData();
@@ -68,7 +70,9 @@ const MemberView = () => {
       if (response.ok) {
         const healthStats = await response.json();
         setHealthStatistics(healthStats);
-        console.log(healthStats);
+        // Initialize editedWeight and editedHeight with fetched values
+        setEditedWeight(healthStats.weight.toString());
+        setEditedHeight(healthStats.height.toString());
       } else {
         console.error('Failed to fetch health statistics');
       }
@@ -110,6 +114,38 @@ const MemberView = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditedDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
+    if (name === 'editedWeight') {
+      setEditedWeight(value);
+    } else if (name === 'editedHeight') {
+      setEditedHeight(value);
+    }
+  };
+  const handleUpdateHealthStats = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/members/${memberId}/healthStatistics`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          weight: parseFloat(editedWeight),
+          height: parseFloat(editedHeight),
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Health statistics updated successfully');
+        fetchHealthStatistics(); // Refresh health statistics after update
+     // Fetch the updated user details after successful update
+       fetchUserDetails(); // Assuming fetchUserDetails updates userDetails state
+
+     
+      } else {
+        console.error('Failed to update health statistics');
+      }
+    } catch (error) {
+      console.error('Error updating health statistics:', error.message);
+    }
   };
 
   const handleUpdateDetails = async () => {
@@ -283,28 +319,47 @@ const MemberView = () => {
       <div className="container mt-5">
       <div className="mb-4">
       <div className="mb-4">
-  <h2>Health Statistics</h2>
-  <table className="table table-bordered">
-    <tbody>
-      <tr>
-        <th scope="row">Weight</th>
-        <td>{healthStatistics.weight} kg</td>
-      </tr>
-      <tr>
-        <th scope="row">Height</th>
-        <td>{healthStatistics.height} cm</td>
-      </tr>
-      <tr>
-        <th scope="row">BMI</th>
-        <td>
-          {(
-            10000 * (healthStatistics.weight / (healthStatistics.height * healthStatistics.height))
-          ).toFixed(2)}
-        </td>
-      </tr>
-
-    </tbody>
-  </table>
+  {/* Health Statistics Section */}
+      <div className="mb-4">
+        <h2>Health Statistics</h2>
+        <table className="table table-bordered">
+          <tbody>
+            <tr>
+              <th scope="row">Weight (kg)</th>
+              <td>
+                <input
+                  type="text"
+                  name="editedWeight"
+                  value={editedWeight}
+                  onChange={handleInputChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Height (cm)</th>
+              <td>
+                <input
+                  type="text"
+                  name="editedHeight"
+                  value={editedHeight}
+                  onChange={handleInputChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">BMI</th>
+              <td>
+                {(
+                  10000 * (healthStatistics.weight / (healthStatistics.height * healthStatistics.height))
+                ).toFixed(2)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button className="btn btn-primary" onClick={handleUpdateHealthStats}>
+          Update Health Statistics
+        </button>
+      </div>
 </div>
 </div>
 {/* Display Personal Details */}

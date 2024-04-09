@@ -63,6 +63,41 @@ app.post("/members", async (req, res) => {
         console.error(err.message);
     }
 });
+//update health stats
+app.put('/members/:id/healthStatistics', async (req, res) => {
+    const memberId = req.params.id;
+    const { weight, height } = req.body;
+  
+    try {
+      // Build the SQL query dynamically based on provided fields
+      let query = 'UPDATE Members SET ';
+      const values = [];
+  
+      if (weight !== undefined) {
+        query += 'weight = $1';
+        values.push(weight);
+      }
+  
+      if (height !== undefined) {
+        if (values.length > 0) {
+          query += ', ';
+        }
+        query += 'height = $' + (values.length + 1);
+        values.push(height);
+      }
+  
+      query += ' WHERE memberid = $' + (values.length + 1);
+      values.push(memberId);
+  
+      // Execute the query with dynamic values
+      const result = await pool.query(query, values);
+      res.json({ message: 'Health statistics updated successfully' });
+    } catch (error) {
+      console.error('Error updating health statistics:', error.message);
+      res.status(500).json({ error: 'Failed to update health statistics' });
+    }
+  });
+  
 //update personal info
 app.put("/members/:id", async (req, res) => {
     try {
