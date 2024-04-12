@@ -1,7 +1,5 @@
-Name: Anya Gokulsing                             Student ID: 101170595
-Group Number: 90
-COMP 3005 Final Project
-
+Author: Anya Gokulsing (101170595)
+Purpose: COMP 3005 Final Prject
 
 Hi! :)
 
