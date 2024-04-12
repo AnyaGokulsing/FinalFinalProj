@@ -301,6 +301,79 @@ app.post("/members/:memberId/personalTraining", async (req, res) => {
       res.status(500).json({ error: "Failed to register for personal training session" });
     }
   });
+
+// Endpoint to add a group class for a member
+app.post('/members/:memberId/groupClass/:classId', async (req, res) => {
+    const memberId = req.params.memberId;
+    const classId = req.params.classId;
+  
+    try {
+      // Check if the class exists in the member registrations
+      const checkQuery = {
+        text: 'SELECT * FROM MemberRegistrations WHERE memberId = $1 AND classId = $2',
+        values: [memberId, classId],
+      };
+  
+      const { rowCount } = await pool.query(checkQuery);
+  
+      if (rowCount > 0) {
+        return res.status(400).json({ error: 'Member is already registered in this class' });
+      }
+  
+      // Get the class price and current capacity from the Classes table using classId
+      const classQuery = {
+        text: 'SELECT price, currentcapacity, maxcapacity FROM Classes WHERE classId = $1',
+        values: [classId],
+      };
+  
+      const { rows } = await pool.query(classQuery);
+  
+      if (rows.length === 0) {
+        return res.status(404).json({ error: 'Class not found' });
+      }
+  
+      const { price, currentcapacity, maxcapacity } = rows[0];
+  
+      // Check if the class is at maximum capacity
+      if (currentcapacity >= maxcapacity) {
+        return res.status(400).json({ error: 'Class is already at maximum capacity' });
+      }
+  
+      // Insert the registration into the MemberRegistrations table
+      const insertQuery = {
+        text: 'INSERT INTO MemberRegistrations (memberId, classId) VALUES ($1, $2) RETURNING *',
+        values: [memberId, classId],
+      };
+  
+      const registration = await pool.query(insertQuery);
+  
+      // Update the member's bill by adding the class price
+      const updateBillQuery = {
+        text: 'UPDATE Bill SET balance = balance + $1 WHERE accountId = $2 RETURNING *',
+        values: [price, memberId],
+      };
+  
+      await pool.query(updateBillQuery);
+  
+      // Increment the current capacity of the class
+      const updateCapacityQuery = {
+        text: 'UPDATE Classes SET currentcapacity = currentcapacity + 1 WHERE classId = $1',
+        values: [classId],
+      };
+  
+      await pool.query(updateCapacityQuery);
+  
+      res.status(201).json({
+        message: 'Group class added for member',
+        registration: registration.rows[0],
+      });
+    } catch (error) {
+      console.error('Error adding group class for member:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
+  
   
 // Register a member in a personal training session
 app.post("/members/:memberId/personalTraining", async (req, res) => {
@@ -450,20 +523,6 @@ app.get("/members/:memberId/exerciseProgram", async (req, res) => {
     }
 });
 
-//update health metrics
-app.put("/members/:memberId/healthMetrics", async (req, res) => {
-    try {
-        const { memberId } = req.params;
-        const { strength, flexibility, cardio } = req.body;
-        const updateHealthMetrics = await pool.query(
-            "UPDATE Members SET strength = $1, flexibility = $2, cardio = $3 WHERE memberId = $4",
-            [strength, flexibility, cardio, memberId]
-        );
-        res.json("Health metrics updated");
-    } catch (err) {
-        console.error(err.message);
-    }
-});
 // Trainer Functions
 //add availability
 app.post("/trainers/availability", async (req, res) => {
@@ -573,7 +632,7 @@ app.get("/admin/equipmentMaintenance/history/:equipmentId", async (req, res) => 
         console.error(err.message);
     }
 });
-// Route to pay a bill and update balance to zero
+// Route to bil payment to update balance to zero
 app.post("/payBill/:accountId", async (req, res) => {
       try {
         const {accountId} = req.params; // Assuming you want to pay the bill for account ID 1

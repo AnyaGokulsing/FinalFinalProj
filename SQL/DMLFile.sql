@@ -70,10 +70,10 @@ VALUES
     (2, '2024-04-01 14:30:00', 'Maintenance', 2);
 
 -- Classes
-INSERT INTO Classes (className, trainerId, memberId, roomId, startTime, endTime, price, maxcapacity, exerciseProgramid, groupClass)
+INSERT INTO Classes (className, trainerId, roomId, startTime, endTime, price, maxcapacity, groupClass)
 VALUES
-    ('Yoga Class', 1, 1, 1, '2024-04-01 10:00:00', '2024-04-01 11:00:00', 15.0, 20, 1, TRUE),
-    ('Strength Training', 2, 2, 2, '2024-04-01 15:00:00', '2024-04-01 16:00:00', 20.0, 15, 2, FALSE);
+    ('Yoga Class', 1, 1, '2024-04-01 10:00:00', '2024-04-01 11:00:00', 15.0, 20, TRUE),
+    ('Strength Training', 2, 2, '2024-04-01 15:00:00', '2024-04-01 16:00:00', 20.0, 15, FALSE);
 
 -- MemberRegistrations
 INSERT INTO MemberRegistrations (memberId, classId)

@@ -1,4 +1,5 @@
---DDL to create the database
+--DDL to create database
+
 CREATE TABLE Admin (
     adminId SERIAL PRIMARY KEY,
     firstName VARCHAR(255),

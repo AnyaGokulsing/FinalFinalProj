@@ -4,7 +4,8 @@
 --     descrip VARCHAR(255)
 -- );
 CREATE DATABASE comp3005finalproj;
---DDL to CREATE
+--DDL to CREATE--DDL to create database
+
 CREATE TABLE Admin (
     adminId SERIAL PRIMARY KEY,
     firstName VARCHAR(255),
@@ -32,14 +33,11 @@ CREATE TABLE Members(
     emailAddress VARCHAR(255),
     height DOUBLE PRECISION,
     weight DOUBLE PRECISION,
-    exerciseProgramId INT REFERENCES ExerciseProgram(exerciseProgramId ),
-    strength DOUBLE PRECISION,
-    flexibility DOUBLE PRECISION,
-    cardio DOUBLE PRECISION
+    exerciseProgramId INT REFERENCES ExerciseProgram(exerciseProgramId )
 );
 CREATE TABLE MemberAchievement(
     achievementid SERIAL PRIMARY KEY,
-	memberId INT REFERENCES Members(memberId),
+    memberId INT REFERENCES Members(memberId),
     steps INT,
     heartRate DOUBLE PRECISION,
     timeToComplete INT,
@@ -96,6 +94,7 @@ CREATE TABLE Classes(
     endTime TIMESTAMP,
     price DOUBLE PRECISION,
     maxcapacity INT,
+    currentcapacity INT,
     exerciseProgramid INT,
     groupClass BOOL,
     FOREIGN KEY (trainerId) REFERENCES Trainer(trainerId),
@@ -112,3 +111,4 @@ CREATE TABLE MemberRegistrations(
     memberId INT REFERENCES Members(memberId),   
     classId INT REFERENCES Classes(classId)
 );
+________
