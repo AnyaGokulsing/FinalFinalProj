@@ -1,4 +1,12 @@
-This README is just to set up the project. The real README with the ER diagram, Relational Schema, DML + DDL files and the queries for each function required from the specs is in the file READMETeam90COMP3005FinalProj.pdf submitted on Brightspace.
+Name: Anya Gokulsing                             Student ID: 101170595
+Group Number: 90
+COMP 3005 Final Project
+
+
+Hi! :)
+
+
+This README is just to set up the project. The required README with the ER diagram, Relational Schema, DML + DDL files and the queries for each function required from the specs is in the file READMETeam90COMP3005FinalProj.pdf submitted on Brightspace which you can also find in this project.
 
 Instructions to set up the project:
 A) Database side setup
