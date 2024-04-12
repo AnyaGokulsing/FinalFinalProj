@@ -245,7 +245,6 @@ app.post("/members/:memberId/personalTraining", async (req, res) => {
         maxcapacity,
         availabilityId,
         className,
-        exerciseProgramId,
       } = req.body;
       console.log(  [trainerId, startTime, endTime]);
     console.log("availabilityId herererere")
@@ -264,8 +263,8 @@ app.post("/members/:memberId/personalTraining", async (req, res) => {
         console.log("INSERT herererere");
         // Create a non-group class for the personal training session
         const newClass = await client.query(
-          "INSERT INTO Classes (trainerId, roomId, startTime, endTime, price, maxcapacity, exerciseProgramid, groupClass, currentcapacity, className) VALUES ($1, $2, $3, $4, $5, $6, $7, false, 1,$8) RETURNING *",
-          [trainerId, roomId, startTime, endTime, price, maxcapacity, exerciseProgramId, className]
+          "INSERT INTO Classes (trainerId, roomId, startTime, endTime, price, maxcapacity, groupClass, currentcapacity, className) VALUES ($1, $2, $3, $4, $5, $6, false,1,$7) RETURNING *",
+          [trainerId, roomId, startTime, endTime, price, maxcapacity, className]
         );
         console.log("UPDATE herererere");
         console.log(newClass);
@@ -387,8 +386,7 @@ app.post("/members/:memberId/personalTraining", async (req, res) => {
         price,
         maxcapacity,
         availabilityId,
-        className,
-        exerciseProgramId,
+        className
       } = req.body;
   
       // Check if the member is already registered in the specified class
@@ -411,8 +409,8 @@ app.post("/members/:memberId/personalTraining", async (req, res) => {
   
         // Create a non-group class for the personal training session
         const newClass = await client.query(
-          "INSERT INTO Classes (trainerId, roomId, startTime, endTime, price, maxcapacity, exerciseProgramid, groupClass, currentcapacity, className) VALUES ($1, $2, $3, $4, $5, $6, $7, false, 1, $8) RETURNING *",
-          [trainerId, roomId, startTime, endTime, price, maxcapacity, exerciseProgramId, className]
+          "INSERT INTO Classes (trainerId, roomId, startTime, endTime, price, maxcapacity, groupClass, currentcapacity, className) VALUES ($1, $2, $3, $4, $5, $6, $7, false, 1, $8) RETURNING *",
+          [trainerId, roomId, startTime, endTime, price, maxcapacity, className]
         );
   
         const classId = newClass.rows[0].classid;
@@ -659,12 +657,11 @@ app.put("/admin/classes/:classId", async (req, res) => {
             maxcapacity,
             price,
             roomId,
-            exerciseProgramId,
             isGroupClass
         } = req.body;
         const updateClass = await pool.query(
-            "UPDATE Classes SET startTime = $1, endTime = $2, trainerId = $3, maxcapacity = $4, price = $5, roomId = $6, exerciseProgramId = $7, isGroupClass = $8 WHERE classId = $9",
-            [startTime, endTime, trainerId, maxcapacity, price, roomId, exerciseProgramId, isGroupClass, classId]
+            "UPDATE Classes SET startTime = $1, endTime = $2, trainerId = $3, maxcapacity = $4, price = $5, roomId = $6, isGroupClass = $7 WHERE classId = $8",
+            [startTime, endTime, trainerId, maxcapacity, price, roomId, isGroupClass, classId]
         );
         res.json("Class updated");
     } catch (err) {
@@ -698,14 +695,13 @@ app.post("/admin/classes", async (req, res) => {
             trainerId,
             maxcapacity,
             price,
-            roomId,
-            exerciseProgramId
-        } = req.body;
+            roomId
+            } = req.body;
 
         // Insert the new class into the database
         const newClass = await pool.query(
-            "INSERT INTO Classes (startTime, endTime, className, trainerId, maxcapacity, price, roomId, groupClass, exerciseProgramId) VALUES ($1, $2, $3, $4, $5, $6, $7, 'yes', $8) RETURNING *",
-            [startTime, endTime, className, trainerId, maxcapacity, price, roomId, exerciseProgramId]
+            "INSERT INTO Classes (startTime, endTime, className, trainerId, maxcapacity, price, roomId, groupClass) VALUES ($1, $2, $3, $4, $5, $6, $7, 'yes') RETURNING *",
+            [startTime, endTime, className, trainerId, maxcapacity, price, roomId]
         );
 
         res.status(201).json(newClass.rows[0]); // Return the newly created class

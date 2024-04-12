@@ -15,7 +15,6 @@ const AdminView = () => {
     className: "",
     trainerId: "",
     maxcapacity: "",
-    exerciseProgramId: "",
     isGroupClass: true,
     price: "",
     roomId: "",
@@ -206,7 +205,6 @@ const handlePayBill = async () => {
           className:"",
           trainerId: "",
           maxcapacity: "",
-          exerciseProgramId: "",
           price: "",
           roomId: "",
         });
@@ -274,15 +272,6 @@ const handlePayBill = async () => {
               value={newClassData.maxcapacity}
               onChange={(e) =>
                 setNewClassData({ ...newClassData, maxcapacity: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              className="form-control mb-3"
-              placeholder="Exercise Program Id"
-              value={newClassData.exerciseProgramId}
-              onChange={(e) =>
-                setNewClassData({ ...newClassData, exerciseProgramId: e.target.value })
               }
             />
             <input

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const token = 'BQCUBBZq4js8ooAGXotVPzHB3NRrM9vjHuLm2n2eSuHt0v2QZeZH0wB427vUiQniSm61BQDE9t_sBXlPygsEy619Rlo1hOvrYMJxv80_eOV_tmcidWpsW0b3gOjMZFGC5FfSfkHJps8JRPYhROKfM39EOW4r6GnMORoXEUnYhN0KkrJuqFOw_08pRrkHC9o_OFnGWC0I4JjT1iZDRBVhTLl_cLoBRwjIRdaqc3zn2wLfWVcDJJnIbYTB4fQ9arSngu4xfN94wqUY45ZTU61UqV8P';
+const token = 'BQDHG6aO5btiTK7LzT_r8tY3tTWwEyArPLSuTcLABrAuNlwOAoKSbAv7WtIg4J1qEbnCwJXw7fo1gLXwpn9ALetGKTBzpPj4L-Meu19oojO_i3hC6sYwoWmjHKgdw4LD8yJGddgLBkfiom-6W5d_mRTRkpaYYz4HtvlujifRQyA0USz8HjlnTaDvSJ2qUdjJyXL76q_MK4lMt05N4lSPpgehAGHELjHbvb4uipWkzS8OZt16GGfwEDfh8vE5nKWH-lVxfJH45XUtPDCC8yrakeNU';
 
 const SpotifyTopTracks = () => {
   const [topTracks, setTopTracks] = useState([]);

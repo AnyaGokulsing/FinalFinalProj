@@ -111,4 +111,3 @@ CREATE TABLE MemberRegistrations(
     memberId INT REFERENCES Members(memberId),   
     classId INT REFERENCES Classes(classId)
 );
-________
