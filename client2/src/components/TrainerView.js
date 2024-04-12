@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect } from "react";
-
 const TrainerView = () => {
   // State variables for adding availability
   const [addStartTime, setAddStartTime] = useState("");
