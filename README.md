@@ -1,35 +1,61 @@
+### COMP 3005 Final Project 
+
 Author: Anya Gokulsing (101170595)
-Purpose: COMP 3005 Final Prject
 
-Hi! :)
+---
 
+Hello! This README provides setup instructions for the COMP 3005 final project. For detailed project specifications, please refer to the [PDF README](https://github.com/AnyaGokulsing/FinalFinalProj/files/14962207/READMETeam90COMP3005FinalProj.pdf) submitted on Brightspace.
 
-This README is just to set up the project. The required README with the ER diagram, Relational Schema, DML + DDL files and the queries for each function required from the specs is in the file READMETeam90COMP3005FinalProj.pdf submitted on Brightspace which you can also find in this project.
+#### Project Setup Instructions
 
-Instructions to set up the project:
-A) Database side setup
-Set up the database using the files in the SQL folder (DDLFile + DMLFile) or copy the database.sql file in ./server and run this locally in pgAdmin. 
+**Database Side Setup:**
 
-IMPORTAMT NOTE: Please change the host, password, port, database name and user to the values of your PostgreSQL server. The pool connects the server to the DB instance. You can check if the connection is successful by going to the route 'http://localhost:5000/test-db-connection'.
+1. Set up the database using the files in the SQL folder (`DDLFile` + `DMLFile`) or copy the `database.sql` file in `./server` and run it locally in pgAdmin.
 
-B) Server Side setup
-1) To start the server on port 5000 in FinalFinalProj/server:
-Download all the libraries using npm (npm start + npm init )
-Then run node index.js
+   **Important Note:** Modify the database connection details (`host`, `password`, `port`, `database name`, `user`) according to your PostgreSQL server settings. The pool connects the server to the database instance. Test the connection by visiting `http://localhost:5000/test-db-connection`.
 
-The clients each represent a user with hardcoded id of 1 (id here refers to trainerId, adminId, memberId for Trainer, Members and Admin respectively).
-The clients were created using npx create-react-app and React with Bootstrap5 (more info in the READMETeam90COMP3005FinalProj.pdf)
-To start the clients (React Views for the users since I could not use Passport with the Express server for some reason):
-Monitor your terminal as you will be asked to confirm (Y or N) on which port to run which React client. An example setup is:
+**Server Side Setup:**
 
-2) To start the client2 for Trainer on port 3000
-Go to FinalFinalProj/client2: npm start 
+1. To start the server on port 5000, navigate to `FinalFinalProj/server`:
 
-3) To start the client3 for Admin on port 3001
-Go to FinalFinalProj/client3: npm start 
+   - Download all the required libraries using npm:
+     ```
+     npm install
+     ```
+   - Start the server:
+     ```
+     node index.js
+     ```
 
-4) To start the client4 for Member on port 3002
-Go to FinalFinalProj/client4: npm start 
+**Client Side Setup:**
 
-Check in the DevTools pane to see what values and request/response are being sent as well as the client side checks for basic input sanitization and to potentially block bad requests (Ex startTime>endTime + null searches + registering in a class which is already in your schedule + basic errors).
+Clients represent users with hardcoded IDs (`1` for `trainerId`, `adminId`, `memberId` for Trainer, Admin, and Members respectively). React with Bootstrap 5 was used to create the clients (more details in the [PDF README](https://github.com/AnyaGokulsing/FinalFinalProj/files/14962207/READMETeam90COMP3005FinalProj.pdf)).
 
+2. To start the `client2` for Trainers on port 3000, navigate to `FinalFinalProj/client2`:
+   ```
+   cd FinalFinalProj/client2
+   npm install
+   npm start
+   ```
+
+3. To start the `client3` for Admin on port 3001, navigate to `FinalFinalProj/client3`:
+   ```
+   cd FinalFinalProj/client3
+   npm install
+   npm start
+   ```
+
+4. To start the `client4` for Members on port 3002, navigate to `FinalFinalProj/client4`:
+   ```
+   cd FinalFinalProj/client4
+   npm install
+   npm start
+   ```
+
+Monitor your terminal for prompts (Y or N) to select which port to run each React client. Example setup:
+
+- `client2` (Trainers) on `http://localhost:3000`
+- `client3` (Admin) on `http://localhost:3001`
+- `client4` (Members) on `http://localhost:3002`
+
+Inspect the DevTools pane for details on requests, responses, and client-side checks for input sanitization and error handling (e.g., `startTime > endTime`, null searches, duplicate class registrations, basic error handling).
